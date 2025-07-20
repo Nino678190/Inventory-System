@@ -11,7 +11,7 @@
             Inventory System | Settings
         </title>
     </head>
-    <body onload="getViewMode();">
+    <body onload="getViewMode(); getSettings();">
         <header>
             <section>
                 <button onclick="window.location.href='index.html'">
@@ -28,26 +28,50 @@
             </nav>
         </header>
         <noscript>Bitte aktiviere JS</noscript>
-        <main>
+        <main class="settings">
             <h1>Einstellungen</h1>
             <form>
                 <h3>DarkMode/LightMode</h3>
                 <label for="darkMode">Dark Mode</label>
-                <input type="radio" id="darkMode" name="viewMode" onchange="toggleDarkMode()">
+                <input type="radio" id="darkMode" name="viewMode" value="dark" onchange="toggleDarkMode()">
                 <label for="lightMode">Light Mode</label>
-                <input type="radio" id="lightMode" name="viewMode" onchange="toggleLightMode()">
+                <input type="radio" id="lightMode" name="viewMode" value="light" onchange="toggleLightMode()">
                 <label for="autoMode">Automatisch</label>
-                <input type="radio" id="autoMode" name="viewMode" onchange="toggleAutoMode()">
-                <h3>Sprache</h3>
-                <label for="language">Sprache auswählen:</label>
-                <select id="language" name="language" onchange="changeLanguage()">
-                    <option value="de">Deutsch</option>
-                    <option value="en">English</option>
-                    <option value="fr">Français</option>
-                    <option value="es">Español</option>
-                </select>
-                
+                <input type="radio" id="autoMode" name="viewMode" value="auto" onchange="toggleAutoMode()">                
             </form>
+            <h3>
+                Sprache
+            </h3>
+            <label for="language">Sprache auswählen:</label>
+            <select id="language" name="language" onchange="changeLanguage()">
+                <option value="de">Deutsch</option>
+                <option value="en">Englisch</option>
+                <option value="fr">Französisch</option>
+                <option value="es">Spanisch</option>
+            </select>
+            <h3>Schriftart</h3>
+            <label for="font">Schriftart auswählen:</label>
+            <select id="font" name="font" onchange="changeFont()">
+                <option value="noto-sans">Noto Sans</option>
+                <option value="arial">Arial</option>
+                <option value="times-new-roman">Times New Roman</option>
+                <option value="courier-new">Courier New</option>
+            </select>
+            <h3>Export Data</h3>
+            <button type="button" class="normalButton" onclick="exportData()">Daten exportieren</button>
+            <!-- <h3>Import Data</h3>
+            <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+            <button type="button" onclick="document.getElementById('importFile').click()">Datei auswählen</button> -->
         </main>
+        <script>
+            function getSettings() {
+                const viewMode = localStorage.getItem('viewMode') || 'auto';
+                document.querySelector(`input[name="viewMode"][value="${viewMode}"]`).checked = true;
+                const language = localStorage.getItem('language') || 'de';
+                document.getElementById('language').value = language;
+                const font = localStorage.getItem('font') || 'noto-sans';
+                document.getElementById('font').value = font;
+            }
+        </script>
     </body>
 </html>

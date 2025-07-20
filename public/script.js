@@ -20,9 +20,11 @@ function toggleDarkMode(a) {
     root.style.setProperty('--background-color', '#121212');
     root.style.setProperty('--text-color', '#ffffff');
     root.style.setProperty('--border-color', '#333333');
-    document.querySelectorAll('.headIcon').forEach(icon => [
-        icon.style.filter = 'invert(1)'
-    ])
+    root.style.setProperty('--primary-color', '#256029');
+    document.querySelectorAll('.headIcon').forEach(icon => icon.style.filter = 'invert(1)');
+    document.querySelectorAll('.menu').forEach(menu => {
+        menu.style.filter = 'invert(1)';
+    });
 }
 
 function toggleLightMode(a) {
@@ -37,11 +39,13 @@ function toggleLightMode(a) {
     document.querySelectorAll('.headIcon').forEach(icon => [
         icon.style.filter = 'invert(0)'
     ])
+    document.querySelectorAll('.menu').forEach(menu => {
+        menu.style.filter = 'invert(0)';
+    });
 }
 
 function toggleAutoMode() {
     localStorage.setItem('viewMode', 'auto');
-    const root = document.documentElement;
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         toggleDarkMode('auto');
     } else {
@@ -73,6 +77,9 @@ function getData() {
                         </td>
                     `;
             document.getElementById('data-table').appendChild(row);
+            if (localStorage.getItem('viewMode') === 'dark') {
+                row.querySelectorAll('.menu').forEach(menu => menu.style.filter = 'invert(1)');
+            }
         }
     }).catch(error => {
         console.error('Es gab ein Problem mit der Fetch-Operation:', error);
@@ -151,3 +158,22 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Es gab ein Problem beim Laden der Tags:', error);
     });
 });
+
+function exportData() {
+    fetch('/api/all').then(response => {
+        if (!response.ok) {
+            throw new Error('Netzwerkantwort war nicht ok');
+        }
+        return response.json();
+    }).then(data => {
+        const csvContent = "data:text/csv;charset=utf-8," + data.map(e => Object.values(e).join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "inventory_data.csv");
+        document.body.appendChild(link);
+        link.click();
+    }).catch(error => {
+        console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+    });
+}
