@@ -6,6 +6,8 @@ services:
       POSTGRES_USER: dbUser
       POSTGRES_PASSWORD: dbPassword
     restart: always
+    ports:
+      - "5432:5432"
   app:
     image: inventory
     ports:

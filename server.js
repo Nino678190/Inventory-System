@@ -1,19 +1,11 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { Pool } = require('pg');
+const pool = require('./pool.js'); 
 const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-
-const pool = new Pool({
-    user: 'dbUser',
-    host: 'localhost',
-    database: 'dbName',
-    password: 'dbPassword',
-    port: 5432,
-});
 
 /* 
     Benötigte Endpoints:
