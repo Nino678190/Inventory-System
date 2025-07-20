@@ -6,6 +6,7 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 /* 
     Benötigte Endpoints:
@@ -130,9 +131,9 @@ app.get('/api/tags', async (req, res) => {
 });
 
 app.post('/api/add', async (req, res) => {
-    const { name, description, quantity, tags } = req.body;
+    const { name, description, quantity, tags, ort } = req.body;
     try {
-        const data = await pool.query('INSERT INTO items (name, description, quantity, tags) VALUES ($1, $2, $3, $4) RETURNING *', [name, description, quantity, tags]);
+        const data = await pool.query('INSERT INTO items (name, description, quantity, tags, ort) VALUES ($1, $2, $3, $4, $5)', [name, description, quantity, tags, ort]);
         res.status(201).json(data.rows[0]);
     } catch (error) {
         console.error('Error adding item:', error);

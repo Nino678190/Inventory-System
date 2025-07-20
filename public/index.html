@@ -3,21 +3,94 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width initial-scale=1.0">
-        <base href="index.html"><!--- Basis Seite--->
-        <link rel="stylesheet" href="style.css">
-        <link rel="shortcut icon" type="image/x-icon" href="#">
-        <script src="script.js"></script>
+        <base href="/"><!--- Basis Seite--->
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+        <script src="script.js" type="text/javascript"></script>
         <title>
             Test
         </title>
     </head>
 
-    <body>
-        <header>Alles was oben steht(Kopfzeile)</header>
-        <noscript>Wird angezeigt wenn JS deaktiviert ist oder nicht funktioniert</noscript>
+    <body onload="getData()">
+        <header>
+            <section>
+                <img src="" alt="">
+            </section>
+            <nav>
+                <input type="search" name="search" id="search" placeholder="Suche...">
+                <button onclick="document.querySelector('dialog').showModal()">
+                    <img src="" alt="Hinzu">
+                </button>
+                <button onclick="window.location.href='settings.html'">
+                    <img src="" alt="Einstellungen">
+                </button>
+            </nav>
+        </header>
+        <noscript>Bitte aktiviere JS</noscript>
         <main>
-            <h1>Willkommen auf der Testseite</h1>
-            <p>Dies ist ein einfacher Test für HTML-Strukturen.</p>
-            <button id="testButton">Klicke mich!</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Beschreibung</th>
+                        <th>Anzahl</th>
+                        <th>Tags</th>
+                        <th>Ort</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table">
+                    <!-- Dynamisch generierte Daten werden hier eingefügt -->
+                </tbody>
+            </table>
+        </main>
+        <dialog>
+            <h2>Item hinzu</h2>
+            <form id="add-item-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="description">Beschreibung:</label>
+                <input type="text" id="description" name="description" required>
+                <label for="quantity">Anzahl:</label>
+                <input type="number" id="quantity" name="quantity" required>
+                <label for="tags">Tags:</label>
+                <input type="text" id="tags" name="tags">
+                <label for="ort">Ort:</label>
+                <input type="text" id="ort" name="ort">
+                <button type="submit">Hinzufügen</button>
+                <button type="button" onclick="document.querySelector('dialog').close()">Abbrechen</button>
+            </form>
+        </dialog>
     </body>
+    <script>
+        document.getElementById('add-item-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const quantity = document.getElementById('quantity').value;
+            const tags = document.getElementById('tags').value;
+            const ort = document.getElementById('ort').value;
+
+            fetch('/api/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, description, quantity, tags, ort })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Netzwerkantwort war nicht ok');
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                document.getElementById('add-item-form').reset();
+                document.querySelector('dialog').close();
+                getData(); // Aktualisiere die Tabelle
+            }).catch(error => {
+                console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+            });
+        });
+
+    </script>
 </html>
