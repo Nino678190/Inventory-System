@@ -1,4 +1,64 @@
+header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    padding: 0 20px;
+    margin-bottom: 10px;
+}
+
+header>nav{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+header>nav>button>img{
+    width: 30px;
+    height: 30px;
+}
+
+noscript{
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
 button{
     all: unset;
     cursor: pointer;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td{
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.none{
+    border: none;
+    width: fit-content;
+    padding: 5px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.tag{
+    border-radius: 5px;
+    padding: 2px 5px;
+    margin-right: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.menu{
+    width: 30px;
+    height: 30px;
 }

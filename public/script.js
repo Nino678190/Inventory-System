@@ -16,9 +16,9 @@ function getData() {
                         <td>${item.quantity}</td>
                         <td>${tags}</td>
                         <td>${item.ort}</td>
-                        <td>
-                            <button class="edit-button" onclick="editItem(${item.id})">Edit</button>
-                            <button class="delete-button" onclick="deleteItem(${item.id})">Delete</button>
+                        <td class="none">
+                            <button class="edit-button" onclick="editItem(${item.id})"><img src="images/edit-pen-icon.png" class="menu" alt="edit"></button>
+                            <button class="delete-button" onclick="deleteItem(${item.id})"><img src="images/recycle-bin-icon.png" class="menu" alt="delete"></button>
                         </td>
                     `;
             document.getElementById('data-table').appendChild(row);
@@ -62,7 +62,33 @@ function toggleForms() {
     }
 }
 
-function decrypt(tags){
+function decrypt(tags) {
+    if (!tags) {
+        return '';
+    }
+    const tagNames = tags.split(',');
+    const allTags = JSON.parse(localStorage.getItem('tags')) || [];
+    let decryptedTags = "";
+
+    for (const tagName of tagNames) {
+        const trimmedTagName = tagName.trim();
+        if (trimmedTagName) {
+            const tagData = allTags.find(t => t.name === trimmedTagName);
+            if (tagData) {
+                decryptedTags += `
+                    <span class="tag" style="background-color: ${tagData.color}">${tagData.emoji || ''} ${tagData.name}</span>
+                `;
+            } else {
+                // Fallback for a tag that is not found
+                decryptedTags += `<span class="tag">${trimmedTagName}</span>`;
+            }
+        }
+    }
+    return decryptedTags;
+}
+
+// It's better to fetch tags once when the page loads
+document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/tags').then(response => {
         if (!response.ok) {
             throw new Error('Netzwerkantwort war nicht ok');
@@ -70,24 +96,7 @@ function decrypt(tags){
         return response.json();
     }).then(data => {
         localStorage.setItem('tags', JSON.stringify(data));
-        
     }).catch(error => {
-        console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+        console.error('Es gab ein Problem beim Laden der Tags:', error);
     });
-
-    let decryptedTags = "";
-    for (let i = 0; i < tags.length; i++) {
-        const tag = tags[i];
-        const tagData = JSON.parse(localStorage.getItem('tags')).find(t => t.name === tag.name);
-        if (tagData) {
-            decryptedTags += `
-                <span class="tag ${tagData.id}" style="background-color: ${tagData.color}">${tagData.emoji } ${tagData.name}</span>
-            `
-        } else {
-            decryptedTags += `
-                <span class="tag ${tag.id}" style="background-color: ${tag.color}">${tag.emoji} ${tag.name}</span>
-            `; // Fallback, falls Tag nicht gefunden wird
-        }
-    }
-    return decryptedTags;
-}
+});

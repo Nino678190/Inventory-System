@@ -45,7 +45,6 @@
                     </tr>
                 </thead>
                 <tbody id="data-table">
-                    <!-- Dynamisch generierte Daten werden hier eingefügt -->
                 </tbody>
             </table>
         </main>
@@ -125,6 +124,34 @@
         </dialog>
     </body>
     <script>
+        document.getElementById('tag-add').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const tagName = document.getElementById('tag-name').value;
+            const tagDescription = document.getElementById('tag-description').value;
+            const tagColor = document.getElementById('tag-color').value;
+            const tagIcon = document.getElementById('tag-icon').value;
+
+            fetch('/api/addTag', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: tagName, description: tagDescription, color: tagColor, icon: tagIcon })
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Netzwerkantwort war nicht ok');
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                document.getElementById('tag-add').reset();
+                document.querySelector('dialog').close();
+                getData(); // Aktualisiere die Tabelle
+            }).catch(error => {
+                console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+            });
+        });
+
         document.getElementById('add-item-form').addEventListener('submit', function (event) {
             event.preventDefault();
             const name = document.getElementById('name').value;

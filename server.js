@@ -145,7 +145,7 @@ app.post('/api/addTag', async (req, res) => {
     const { name, description, color, emoji } = req.body;
     try {
         await pool.query('INSERT INTO tags (name, description, color, emoji) VALUES ($1, $2, $3, $4)', [name, description, color, emoji]);
-        res.status(201).message('Tag added successfully');
+        res.status(201).json('Tag added successfully');
     } catch (error) {
         console.error('Error adding tag:', error);
         res.status(500).json({ error: 'Failed to add tag' });
