@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width initial-scale=1.0">
+        <base href="/"><!--- Basis Seite--->
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+        <script src="script.js" type="text/javascript"></script>
+        <title> 
+            Inventory System | Settings
+        </title>
+    </head>
+    <body onload="getViewMode();">
+        <header>
+            <section>
+                <button onclick="window.location.href='index.html'">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </button>
+            </section>
+            <nav>
+                <button onclick="document.querySelector('dialog').showModal()">
+                    <img src="images/plus-icon.png" alt="Hinzu" class="headIcon">
+                </button>
+                <button onclick="window.location.href='settings.html'">
+                    <img src="images/setting-icon.png" alt="Einstellungen" class="headIcon">
+                </button>
+            </nav>
+        </header>
+        <noscript>Bitte aktiviere JS</noscript>
+        <main>
+            <h1>Einstellungen</h1>
+            <form>
+                <h3>DarkMode/LightMode</h3>
+                <label for="darkMode">Dark Mode</label>
+                <input type="radio" id="darkMode" name="viewMode" onchange="toggleDarkMode()">
+                <label for="lightMode">Light Mode</label>
+                <input type="radio" id="lightMode" name="viewMode" onchange="toggleLightMode()">
+                <label for="autoMode">Automatisch</label>
+                <input type="radio" id="autoMode" name="viewMode" onchange="toggleAutoMode()">
+                <h3>Sprache</h3>
+                <label for="language">Sprache auswählen:</label>
+                <select id="language" name="language" onchange="changeLanguage()">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="es">Español</option>
+                </select>
+                
+            </form>
+        </main>
+    </body>
+</html>

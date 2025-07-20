@@ -1,3 +1,54 @@
+function getViewMode() {
+    const viewMode = localStorage.getItem('viewMode');
+    if (viewMode === 'dark') {
+        toggleDarkMode();
+    } else if (viewMode === 'light') {
+        toggleLightMode();
+    } else if (viewMode === 'auto') {
+        toggleAutoMode();
+    } else {
+        toggleLightMode('auto');
+    }
+}
+
+function toggleDarkMode(a) {
+    localStorage.setItem('viewMode', 'dark');
+    if (a === 'auto') {
+        localStorage.setItem('viewMode', 'auto');
+    }
+    const root = document.documentElement;
+    root.style.setProperty('--background-color', '#121212');
+    root.style.setProperty('--text-color', '#ffffff');
+    root.style.setProperty('--border-color', '#333333');
+    document.querySelectorAll('.headIcon').forEach(icon => [
+        icon.style.filter = 'invert(1)'
+    ])
+}
+
+function toggleLightMode(a) {
+    localStorage.setItem('viewMode', 'light');
+    if (a === 'auto') {
+        localStorage.setItem('viewMode', 'auto');
+    }
+    const root = document.documentElement;
+    root.style.setProperty('--background-color', '#f1f1f1');
+    root.style.setProperty('--text-color', '#333');
+    root.style.setProperty('--border-color', '#cccccc');
+    document.querySelectorAll('.headIcon').forEach(icon => [
+        icon.style.filter = 'invert(0)'
+    ])
+}
+
+function toggleAutoMode() {
+    localStorage.setItem('viewMode', 'auto');
+    const root = document.documentElement;
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        toggleDarkMode('auto');
+    } else {
+        toggleLightMode('auto');
+    }
+}
+
 function getData() {
     fetch('/api/all').then(response => {
         if (!response.ok) {

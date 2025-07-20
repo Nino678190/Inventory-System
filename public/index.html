@@ -12,7 +12,7 @@
         </title>
     </head>
 
-    <body onload="getData()">
+    <body onload="getData(); getViewMode();">
         <header>
             <section>
                 <button onclick="window.location.href='index.html'">
@@ -34,10 +34,10 @@
                     </button>
                 </nav>
                 <button onclick="document.querySelector('dialog').showModal()">
-                    <img src="images/plus-icon.png" alt="Hinzu">
+                    <img src="images/plus-icon.png" alt="Hinzu" class="headIcon">
                 </button>
                 <button onclick="window.location.href='settings.html'">
-                    <img src="images/setting-icon.png" alt="Einstellungen">
+                    <img src="images/setting-icon.png" alt="Einstellungen" class="headIcon">
                 </button>
             </nav>
         </header>
