@@ -121,11 +121,11 @@ function toggleForms() {
     const tagForm = document.getElementById('tag-add');
 
     if (addType === 'add-item') {
-        itemForm.style.display = 'block';
+        itemForm.style.display = 'flex';
         tagForm.style.display = 'none';
     } else {
         itemForm.style.display = 'none';
-        tagForm.style.display = 'block';
+        tagForm.style.display = 'flex';
     }
 }
 
