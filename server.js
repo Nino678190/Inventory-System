@@ -82,6 +82,51 @@ app.get('/api/search/:query', async (req, res) => {
     }
 });
 
+app.get('/api/search/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const data = await pool.query('SELECT * FROM items WHERE id = $1', [id]);
+        if (data.rows.length > 0) {
+            res.status(200).json(data.rows[0]);
+        } else {
+            res.status(404).json({ error: 'Item not found' });
+        }
+    } catch (error) {
+        console.error('Error searching item by ID:', error);
+        res.status(500).json({ error: 'Failed to search item by ID' });
+    }
+});
+
+app.get('/api/search/:quantity', async (req, res) => {
+    const { quantity } = req.params;
+    try {
+        const data = await pool.query('SELECT * FROM items WHERE quantity = $1', [quantity]);
+        if (data.rows.length > 0) {
+            res.status(200).json(data.rows);
+        } else {
+            res.status(404).json({ error: 'No items found with the specified quantity' });
+        }
+    } catch (error) {
+        console.error('Error searching items by quantity:', error);
+        res.status(500).json({ error: 'Failed to search items by quantity' });
+    }
+});
+
+app.get('/api/search/:tags', async (req, res) => {
+    const { tags } = req.params;
+    try {
+        const data = await pool.query('SELECT * FROM items WHERE tags ILIKE $1', [`%${tags}%`]);
+        if (data.rows.length > 0) {
+            res.status(200).json(data.rows);
+        } else {
+            res.status(404).json({ error: 'No items found with the specified tags'});
+        }
+    } catch (error) {
+        console.error('Error searching items by tags:', error);
+        res.status(500).json({ error: 'Failed to search items by tags' });
+    }
+});
+
 app.get('/api/tags', async (req, res) => {
     try {
         const data = await pool.query('SELECT * FROM tags');
@@ -111,6 +156,41 @@ app.post('/api/addTag', async (req, res) => {
     } catch (error) {
         console.error('Error adding tag:', error);
         res.status(500).json({ error: 'Failed to add tag' });
+    }
+});
+
+app.put('/api/update/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, description, quantity, tags } = req.body;
+    try {
+        await pool.query('UPDATE items SET name = $1, description = $2, quantity = $3, tags = $4 WHERE id = $5', [name, description, quantity, tags, id]);
+        res.status(200).json({ message: 'Item updated successfully' });
+    } catch (error) {
+        console.error('Error updating item:', error);
+        res.status(500).json({ error: 'Failed to update item' });
+    }
+});
+
+app.put('/api/updateTag/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, description, color, emoji } = req.body;
+    try {
+        await pool.query('UPDATE tags SET name = $1, description = $2, color = $3, emoji = $4 WHERE id = $5', [name, description, color, emoji, id]);
+        res.status(200).json({ message: 'Tag updated successfully' });
+    } catch (error) {
+        console.error('Error updating tag:', error);
+        res.status(500).json({ error: 'Failed to update tag' });
+    }
+});
+
+app.delete('/api/delete/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM items WHERE id = $1', [id]);
+        res.status(200).json({ message: 'Item deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        res.status(500).json({ error: 'Failed to delete item' });
     }
 });
 
