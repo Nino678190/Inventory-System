@@ -69,7 +69,7 @@ function getData() {
         }
         return response.json();
     }).then(data => {
-        console.log(data);
+        document.getElementById('data-table').innerHTML = '';
         for (let i = 0; i < data.length; i++) {
             const item = data[i];
             displayData(item);
