@@ -15,15 +15,20 @@
     <body onload="getData()">
         <header>
             <section>
-                <img src="" alt="">
+                <button onclick="window.location.href='index.html'">
+                    <img src="" alt="Logo">
+                </button>
             </section>
             <nav>
                 <input type="search" name="search" id="search" placeholder="Suche...">
+                <button onclick="searchItems()">
+                    <img src="images/search-icon.png" alt="Suche">
+                </button>
                 <button onclick="document.querySelector('dialog').showModal()">
-                    <img src="" alt="Hinzu">
+                    <img src="images/plus-icon.png" alt="Hinzu">
                 </button>
                 <button onclick="window.location.href='settings.html'">
-                    <img src="" alt="Einstellungen">
+                    <img src="images/setting-icon.png" alt="Einstellungen">
                 </button>
             </nav>
         </header>
@@ -46,6 +51,10 @@
         </main>
         <dialog>
             <h2>Item hinzu</h2>
+            <select name="" id="addType" onchange="toggleForms()">
+                <option value="add-item">Item hinzufügen</option>
+                <option value="add-tag">Tag hinzufügen</option>
+            </select>
             <form id="add-item-form">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -58,6 +67,59 @@
                 <label for="ort">Ort:</label>
                 <input type="text" id="ort" name="ort">
                 <button type="submit">Hinzufügen</button>
+                <button type="button" onclick="document.querySelector('dialog').close()">Abbrechen</button>
+            </form>
+
+            <form id="tag-add">
+                <label for="tag-name">Tag Name:</label>
+                <input type="text" id="tag-name" name="tag-name" required>
+                <label for="tag-description">Tag Beschreibung:</label>
+                <input type="text" id="tag-description" name="tag-description" required>
+                <label for="tag-color">Tag Farbe:</label>
+                <input type="color" id="tag-color" name="tag-color" required>
+                <label for="tag-icon">Tag Emoji:</label>
+                <select name="tag-icon" id="tag-icon">
+                    <option value="📦">📦 Paket</option>
+                    <option value="📅">📅 Kalender</option>
+                    <option value="📈">📈 Steigendes Diagramm</option>
+                    <option value="📉">📉 Fallendes Diagramm</option>
+                    <option value="📊">📊 Balkendiagramm</option>
+                    <option value="📍">📍 Standort-Pin</option>
+                    <option value="📁">📁 Ordner</option>
+                    <option value="🗂️">🗂️ Ablage</option>
+                    <option value="🏷️">🏷️ Etikett</option>
+                    <option value="💔">💔 Gebrochenes Herz</option>
+                    <option value="💕">💕 Zwei Herzen</option>
+                    <option value="💖">💖 Glitzerndes Herz</option>
+                    <option value="💼">💼 Aktentasche</option>
+                    <option value="😂">😂 Lachtränen</option>
+                    <option value="😅">😅 Erleichtertes Lächeln</option>
+                    <option value="😆">😆 Grinsendes Lachen</option>
+                    <option value="😋">😋 Leckeres Gesicht</option>
+                    <option value="😎">😎 Cooles Gesicht</option>
+                    <option value="😜">😜 Zunge raus</option>
+                    <option value="😡">😡 Wütendes Gesicht</option>
+                    <option value="😢">😢 Trauriges Gesicht</option>
+                    <option value="😁">😁 Zahniges Grinsen</option>
+                    <option value="😍">😍 Verliebtes Gesicht</option>
+                    <option value="🥰">🥰 Lächelnd mit Herzen</option>
+                    <option value="🥺">🥺 Bittendes Gesicht</option>
+                    <option value="😭">😭 Weinendes Gesicht</option>
+                    <option value="🤔">🤔 Nachdenklich</option>
+                    <option value="🤗">🤗 Umarmung</option>
+                    <option value="🤩">🤩 Beeindruckt</option>
+                    <option value="🤫">🤫 Psst!</option>
+                    <option value="🙏">🙏 Betend</option>
+                    <option value="❤️">❤️ Rotes Herz</option>
+                    <option value="🎉">🎉 Party</option>
+                    <option value="🔧">🔧 Schraubenschlüssel</option>
+                    <option value="🛠️">🛠️ Werkzeug</option>
+                    <option value="👍">👍 Daumen hoch</option>
+                    <option value="🙄">🙄 Augenrollen</option>
+                    <option value="🤣">🤣 Lachanfall</option>
+                </select>
+
+                <button type="submit">Tag hinzufügen</button>
                 <button type="button" onclick="document.querySelector('dialog').close()">Abbrechen</button>
             </form>
         </dialog>
