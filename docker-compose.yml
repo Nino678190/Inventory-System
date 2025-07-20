@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: dbName
+      POSTGRES_USER: dbUser
+      POSTGRES_PASSWORD: dbPassword
+    restart: always
+  app:
+    image: my-node-app
+    ports:
+      - "7000:3000"
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - NODE_ENV=development
+    restart: always
+    depends_on:
+      - db
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
