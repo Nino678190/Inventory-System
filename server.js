@@ -64,7 +64,7 @@ app.get('/api/get/:id', async (req, res) => {
     }
 });
 
-app.get('/api/search/:query', async (req, res) => {
+app.get('/api/search/full/:query', async (req, res) => {
     const { query } = req.params;
     try {
         const data = await pool.query('SELECT * FROM items WHERE name ILIKE $1 OR description ILIKE $1', [`%${query}%`]);
@@ -75,7 +75,7 @@ app.get('/api/search/:query', async (req, res) => {
     }
 });
 
-app.get('/api/search/:id', async (req, res) => {
+app.get('/api/search/id/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const data = await pool.query('SELECT * FROM items WHERE id = $1', [id]);
@@ -90,7 +90,7 @@ app.get('/api/search/:id', async (req, res) => {
     }
 });
 
-app.get('/api/search/:quantity', async (req, res) => {
+app.get('/api/search/quantity/:quantity', async (req, res) => {
     const { quantity } = req.params;
     try {
         const data = await pool.query('SELECT * FROM items WHERE quantity = $1', [quantity]);
@@ -105,7 +105,7 @@ app.get('/api/search/:quantity', async (req, res) => {
     }
 });
 
-app.get('/api/search/:tags', async (req, res) => {
+app.get('/api/search/tags/:tags', async (req, res) => {
     const { tags } = req.params;
     try {
         const data = await pool.query('SELECT * FROM items WHERE tags ILIKE $1', [`%${tags}%`]);

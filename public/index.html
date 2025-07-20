@@ -23,7 +23,6 @@
                 <nav>
                     <select name="searchType" id="searchType">
                         <option value="full">Full Text</option>
-                        <option value="name">Name</option>
                         <option value="id">ID</option>
                         <option value="tag">Tag</option>
                         <option value="anzahl">Anzahl</option>
@@ -140,8 +139,54 @@
         });
 
         function searchItems(){
-
+            const searchType = document.getElementById('searchType').value;
+            const value = document.getElementById('search').value.trim();
+            if (value === '') {
+                alert('Bitte gib einen Suchbegriff ein.');
+                return;
+            }
+            if (searchType === 'full'){
+                searchFull(value);
+            } else if (searchType === 'id'){
+                searchId(value);
+            } else if (searchType === 'tag'){
+                searchTag(value);
+            } else if (searchType === 'anzahl'){
+                searchAnzahl(value);
+            } else {
+                alert('Ungültiger Suchtyp.');
+            }
         }
+
+        function searchFull(value) {
+            fetch(`/api/search/full/${encodeURIComponent(value)}`).then(response => response.json())
+                .then(data => {
+                    document.getElementById('data-table').innerHTML = '';
+                    for (let i = 0; i < data.length; i++) {
+                        const item = data[i];
+                        displayData(item);
+                    }
+                }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+        }
+
+        function searchId(value) {
+            if (isNaN(value)) {
+                alert('Bitte gib eine gültige ID ein.');
+                return;
+            }
+            fetch(`/api/search/id/${value}`).then(response => response.json())
+                .then(data => {
+                    document.getElementById('data-table').innerHTML = '';
+                    if (data.length > 0) {
+                        displayData(data[0]);
+                    } else {
+                        alert('Kein Eintrag gefunden.');
+                    }
+                })
+                .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+        }
+
+
 
         document.getElementById('tag-add').addEventListener('submit', function (event) {
             event.preventDefault();

@@ -72,27 +72,31 @@ function getData() {
         console.log(data);
         for (let i = 0; i < data.length; i++) {
             const item = data[i];
-            const row = document.createElement('tr');
-            const tags = decrypt(item.tags);
-            row.innerHTML = `
-                        <td>${item.name}</td>
-                        <td>${item.description}</td>
-                        <td>${item.quantity}</td>
-                        <td class="tdTags">${tags}</td>
-                        <td>${item.ort}</td>
-                        <td class="none">
-                            <button class="edit-button" onclick="editItem(${item.id})"><img src="images/edit-pen-icon.png" class="menu" alt="edit"></button>
-                            <button class="delete-button" onclick="deleteItem(${item.id})"><img src="images/recycle-bin-icon.png" class="menu" alt="delete"></button>
-                        </td>
-                    `;
-            document.getElementById('data-table').appendChild(row);
-            if (localStorage.getItem('viewMode') === 'dark') {
-                row.querySelectorAll('.menu').forEach(menu => menu.style.filter = 'invert(1)');
-            }
+            displayData(item);
         }
     }).catch(error => {
         console.error('Es gab ein Problem mit der Fetch-Operation:', error);
     });
+}
+
+function displayData(item) {
+    const row = document.createElement('tr');
+    const tags = decrypt(item.tags);
+    row.innerHTML = `
+        <td>${item.name}</td>
+        <td>${item.description}</td>
+        <td>${item.quantity}</td>
+        <td class="tdTags">${tags}</td>
+        <td>${item.ort}</td>
+        <td class="none">
+            <button class="edit-button" onclick="editItem(${item.id})"><img src="images/edit-pen-icon.png" class="menu" alt="edit"></button>
+            <button class="delete-button" onclick="deleteItem(${item.id})"><img src="images/recycle-bin-icon.png" class="menu" alt="delete"></button>
+        </td>
+    `;
+    document.getElementById('data-table').appendChild(row);
+    if (localStorage.getItem('viewMode') === 'dark') {
+        row.querySelectorAll('.menu').forEach(menu => menu.style.filter = 'invert(1)');
+    }
 }
 
 function deleteItem(id) {
@@ -185,4 +189,54 @@ function exportData() {
     }).catch(error => {
         console.error('Es gab ein Problem mit der Fetch-Operation:', error);
     });
+}
+
+function searchItems() {
+    const searchType = document.getElementById('searchType').value;
+    const value = document.getElementById('search').value.trim();
+    if (value === '') {
+        alert('Bitte gib einen Suchbegriff ein.');
+        return;
+    }
+    if (searchType === 'full') {
+        searchFull(value);
+    } else if (searchType === 'id') {
+        searchId(value);
+    } else if (searchType === 'tag') {
+        searchTag(value);
+    } else if (searchType === 'anzahl') {
+        searchAnzahl(value);
+    } else {
+        alert('Ungültiger Suchtyp.');
+    }
+}
+
+function searchFull(value) {
+    fetch(`/api/search/full/${encodeURIComponent(value)}`)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('data-table').innerHTML = '';
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i];
+            displayData(item);
+        }
+    }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+}
+
+function searchId(value) {
+    if (isNaN(value)) {
+        alert('Bitte gib eine gültige ID ein.');
+        return;
+    }
+    fetch(`/api/search/id/${value}`)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('data-table').innerHTML = '';
+        if (data.length > 0) {
+            displayData(data[0]);
+        } else {
+            alert('Kein Eintrag gefunden.');
+        }
+    })
+    .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
 }

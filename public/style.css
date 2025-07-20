@@ -5,6 +5,11 @@
     --border-color: #ccc;
 }
 
+::selection {
+    background-color: var(--primary-color);
+    color: white;
+    filter: invert(0) !important;
+}
 
 @font-face {
     font-family: "NotoSans";
@@ -142,6 +147,7 @@ table{
     width: 100%;
     border-collapse: collapse;
     overflow: scroll;
+    padding: 0 10px;
 }
 
 th, td{
