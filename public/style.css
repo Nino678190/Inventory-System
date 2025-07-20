@@ -7,6 +7,12 @@ header{
     margin-bottom: 10px;
 }
 
+.logo{
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+}
+
 header>nav{
     display: flex;
     align-items: center;
@@ -15,6 +21,17 @@ header>nav{
 }
 
 header>nav>button>img{
+    width: 30px;
+    height: 30px;
+}
+
+header>nav>nav{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+header>nav>nav>button>img{
     width: 30px;
     height: 30px;
 }
@@ -33,11 +50,22 @@ button{
 table{
     width: 100%;
     border-collapse: collapse;
+    overflow: scroll;
 }
 
 th, td{
     padding: 10px;
     border: 1px solid #ccc;
+}
+
+.tdTags{
+    text-align: start;
+    text-wrap: wrap;
+}
+
+td, th{
+    text-align: center;
+    width: fit-content;
 }
 
 .none{

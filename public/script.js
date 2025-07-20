@@ -14,7 +14,7 @@ function getData() {
                         <td>${item.name}</td>
                         <td>${item.description}</td>
                         <td>${item.quantity}</td>
-                        <td>${tags}</td>
+                        <td class="tdTags">${tags}</td>
                         <td>${item.ort}</td>
                         <td class="none">
                             <button class="edit-button" onclick="editItem(${item.id})"><img src="images/edit-pen-icon.png" class="menu" alt="edit"></button>

@@ -8,7 +8,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
         <script src="script.js" type="text/javascript"></script>
         <title>
-            Test
+            Inventory System
         </title>
     </head>
 
@@ -16,14 +16,23 @@
         <header>
             <section>
                 <button onclick="window.location.href='index.html'">
-                    <img src="" alt="Logo">
+                    <img src="logo.png" alt="Logo" class="logo">
                 </button>
             </section>
             <nav>
-                <input type="search" name="search" id="search" placeholder="Suche...">
-                <button onclick="searchItems()">
-                    <img src="images/search-icon.png" alt="Suche">
-                </button>
+                <nav>
+                    <select name="searchType" id="searchType">
+                        <option value="full">Full Text</option>
+                        <option value="name">Name</option>
+                        <option value="id">ID</option>
+                        <option value="tag">Tag</option>
+                        <option value="anzahl">Anzahl</option>
+                    </select>
+                    <input type="search" name="search" id="search" placeholder="Suche...">
+                    <button onclick="searchItems()">
+                        <img src="images/search-icon.png" alt="Suche">
+                    </button>
+                </nav>
                 <button onclick="document.querySelector('dialog').showModal()">
                     <img src="images/plus-icon.png" alt="Hinzu">
                 </button>
