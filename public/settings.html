@@ -63,15 +63,5 @@
             <input type="file" id="importFile" accept=".json" onchange="importData(event)">
             <button type="button" onclick="document.getElementById('importFile').click()">Datei auswählen</button> -->
         </main>
-        <script>
-            function getSettings() {
-                const viewMode = localStorage.getItem('viewMode') || 'auto';
-                document.querySelector(`input[name="viewMode"][value="${viewMode}"]`).checked = true;
-                const language = localStorage.getItem('language') || 'de';
-                document.getElementById('language').value = language;
-                const font = localStorage.getItem('font') || 'noto-sans';
-                document.getElementById('font').value = font;
-            }
-        </script>
     </body>
 </html>
