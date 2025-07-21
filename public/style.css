@@ -13,7 +13,12 @@
 
 @font-face {
     font-family: "NotoSans";
-    src: url(Noto-Sans/NotoSans-Bold.ttf)
+    src: url(fonts/Noto-Sans/NotoSans-Bold.ttf);
+}
+
+@font-face {
+    font-family: "Ubuntu";
+    src: url(fonts/ubuntu-font-family/Ubuntu-B.ttf);
 }
 
 body{

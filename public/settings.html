@@ -52,9 +52,10 @@
             <h3>Schriftart</h3>
             <label for="font">Schriftart auswählen:</label>
             <select id="font" name="font" onchange="changeFont()">
-                <option value="Noto-Sans">Noto Sans</option>
+                <option value="NotoSans">Noto Sans</option>
                 <option value="arial">Arial</option>
                 <option value="times-new-roman">Times New Roman</option>
+                <option value="Ubuntu">Ubuntu Font</option>
             </select>
             <h3>Export Data</h3>
             <button type="button" class="normalButton" onclick="exportData()">Daten exportieren</button>
@@ -77,7 +78,7 @@
             function changeFont() {
                 const selectedFont = document.getElementById('font').value;
                 document.body.style.fontFamily = selectedFont;
-                localStorage.setItem('selectedFont', selectedFont);
+                localStorage.setItem('font', selectedFont);
             }
 
             document.addEventListener('DOMContentLoaded', async () => {

@@ -2,6 +2,9 @@ function getViewMode() {
     const viewMode = localStorage.getItem('viewMode');
     if (viewMode === 'dark') {
         toggleDarkMode();
+        document.querySelectorAll('.menu').forEach(menu => {
+            menu.style.filter = 'invert(1)';
+        });
     } else if (viewMode === 'light') {
         toggleLightMode();
     } else if (viewMode === 'auto') {
@@ -9,6 +12,8 @@ function getViewMode() {
     } else {
         toggleLightMode('auto');
     }
+    const font = localStorage.getItem('font') || 'NotoSans';
+    document.body.style.fontFamily = font;
 }
 
 function toggleDarkMode(a) {
@@ -36,9 +41,9 @@ function toggleLightMode(a) {
     root.style.setProperty('--background-color', '#f1f1f1');
     root.style.setProperty('--text-color', '#333');
     root.style.setProperty('--border-color', '#cccccc');
-    document.querySelectorAll('.headIcon').forEach(icon => [
+    document.querySelectorAll('.headIcon').forEach(icon => {
         icon.style.filter = 'invert(0)'
-    ])
+    });
     document.querySelectorAll('.menu').forEach(menu => {
         menu.style.filter = 'invert(0)';
     });
@@ -58,8 +63,9 @@ function getSettings() {
     document.querySelector(`input[name="viewMode"][value="${viewMode}"]`).checked = true;
     // const language = localStorage.getItem('language') || 'de';
     // document.getElementById('language').value = language;
-    const font = localStorage.getItem('font') || 'noto-sans';
+    const font = localStorage.getItem('font') || 'NotoSans';
     document.getElementById('font').value = font;
+    document.body.style.fontFamily = font;
 }
 
 function getData() {
@@ -94,7 +100,7 @@ function displayData(item) {
         </td>
     `;
     document.getElementById('data-table').appendChild(row);
-    if (localStorage.getItem('viewMode') === 'dark') {
+    if (localStorage.getItem('viewMode') === 'dark' || localStorage.getItem('viewMode') === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         row.querySelectorAll('.menu').forEach(menu => menu.style.filter = 'invert(1)');
     }
 }
