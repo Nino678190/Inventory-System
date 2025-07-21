@@ -63,6 +63,10 @@
             <input type="file" id="importFile" accept=".json" onchange="importData(event)">
             <button type="button" onclick="document.getElementById('importFile').click()">Datei auswählen</button> -->
 
+            <h3>Reset Database</h3>
+            <p>Dies löscht alle Daten in der Datenbank. Bitte sei vorsichtig!</p>
+            <button type="button" class="normalButton red" onclick="deleteData()">Datenbank zurücksetzen</button>
+
             <h3>Tags</h3>
             <p>Hier kannst du Tags verwalten, die in der App verwendet werden.</p>
             <article id="tagList">

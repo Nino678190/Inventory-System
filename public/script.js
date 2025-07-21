@@ -674,3 +674,22 @@ function showAdd(){
     dialog.showModal();
     getViewMode();
 }
+
+function deleteData(){
+    if (confirm('Bist du sicher, dass du alle Daten löschen möchtest? Dies kann nicht rückgängig gemacht werden!')) {
+        fetch('/api/deleteAll', {
+            method: 'DELETE'
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Netzwerkantwort war nicht ok');
+            }
+            alert('Alle Daten wurden gelöscht.');
+            getData(); // Aktualisiere die Tabelle
+        }).catch(error => {
+            console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+        });
+    }
+    localStorage.removeItem('tags'); // Clear tags from localStorage
+    document.getElementById('tagList').innerHTML = '<h4>Alle Tags:</h4>'; // Clear displayed tags
+    localStorage.removeItem('viewMode'); // Clear view mode
+}

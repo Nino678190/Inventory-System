@@ -201,6 +201,17 @@ app.delete('/api/deleteTag/:id', async (req, res) => {
     }
 });
 
+app.delete('/api/deleteAll', async (req, res) => {
+    try {
+        await pool.query('DELETE FROM items');
+        await pool.query('DELETE FROM tags');
+        res.status(200).json({ message: 'All items and tags deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting all items and tags:', error);
+        res.status(500).json({ error: 'Failed to delete all items and tags' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
