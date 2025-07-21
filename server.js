@@ -188,12 +188,26 @@ app.delete('/api/delete/:id', async (req, res) => {
 });
 
 app.delete('/api/deleteTag/:id', async (req, res) => {
-    let { id } = req.params;
+    const { id } = req.params;
     try {
+        // Get the tag name before deleting it
+        const tagResult = await pool.query('SELECT name FROM tags WHERE id = $1', [id]);
+        if (tagResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Tag not found' });
+        }
+        const tagName = tagResult.rows[0].name;
+
+        // Remove the tag from all items that have it.
+        // This handles cases where the tag is at the start, middle, or end of the tags string.
+        await pool.query(`
+            UPDATE items
+            SET tags = TRIM(BOTH ',' FROM REPLACE(',' || REPLACE(tags, ' ', '') || ',', ',' || $1 || ',', ','))
+            WHERE ',' || REPLACE(tags, ' ', '') || ',' LIKE '%,' || $1 || ',%'
+        `, [tagName]);
+
+        // Then, delete the tag itself.
         await pool.query('DELETE FROM tags WHERE id = $1', [id]);
-        // Remove the tag from all items
-        id = id + ', ';
-        await pool.query('UPDATE items SET tags = REPLACE(tags, $1, \'\') WHERE tags LIKE $2', [id, `%${id}%`]);
+
         res.status(200).json({ message: 'Tag deleted successfully' });
     } catch (error) {
         console.error('Error deleting tag:', error);

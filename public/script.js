@@ -76,6 +76,10 @@ function getData() {
         return response.json();
     }).then(data => {
         document.getElementById('data-table').innerHTML = '';
+        if (data.length === 0) {
+            document.getElementById('data-table').innerHTML = '<tr><td colspan="6">Keine Daten gefunden</td></tr>';
+            return;
+        }
         for (let i = 0; i < data.length; i++) {
             const item = data[i];
             displayData(item);
@@ -223,6 +227,10 @@ function searchFull(value) {
     fetch(`/api/search/full/${encodeURIComponent(value)}`).then(response => response.json())
         .then(data => {
             document.getElementById('data-table').innerHTML = '';
+            if (data.length === 0) {
+                document.getElementById('data-table').innerHTML = '<tr><td colspan="6">Keine Daten gefunden</td></tr>';
+                return;
+            }
             for (let i = 0; i < data.length; i++) {
                 const item = data[i];
                 displayData(item);
@@ -241,7 +249,8 @@ function searchId(value) {
             if (data.length > 0) {
                 displayData(data[0]);
             } else {
-                alert('Kein Eintrag gefunden.');
+                document.getElementById('data-table').innerHTML = '<tr><td colspan="6">Keine Daten gefunden</td></tr>';
+                return;
             }
         })
         .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
@@ -250,6 +259,10 @@ function searchId(value) {
 function searchTag(value) {
     fetch(`/api/search/tags/${encodeURIComponent(value)}`).then(response => response.json())
         .then(data => {
+            if (data.length === 0) {
+                document.getElementById('data-table').innerHTML = '<tr><td colspan="6">Keine Daten gefunden</td></tr>';
+                return;
+            }
             document.getElementById('data-table').innerHTML = '';
             for (let i = 0; i < data.length; i++) {
                 const item = data[i];
@@ -265,6 +278,10 @@ function searchAnzahl(value) {
     }
     fetch(`/api/search/quantity/${value}`).then(response => response.json())
         .then(data => {
+            if (data.length === 0) {
+                document.getElementById('data-table').innerHTML = '<tr><td colspan="6">Keine Daten gefunden</td></tr>';
+                return;
+            }
             document.getElementById('data-table').innerHTML = '';
             for (let i = 0; i < data.length; i++) {
                 const item = data[i];
@@ -343,13 +360,13 @@ function editItem(id) {
             dialog.id = 'dialog';
             dialog.innerHTML = `
                         <form id="edit-item-form">
-                            <label for="name">Name:<input type="text" id="nameEdit" name="name" value="${data.name}" required></label><br>
-                            <label for="description">Beschreibung:<input type="text" id="descriptionEdit" name="description" value="${data.description}" required></label>
+                            <label for="name">Name:<input type="text" id="nameEdit" name="name" value="${data.name}" placeholder="z.B. Schraubenzieher" required></label><br>
+                            <label for="description">Beschreibung:<input type="text" id="descriptionEdit" name="description" value="${data.description}" placeholder="z.B. Phillips-Kopf, Größe 2" required></label>
                             <br>
-                            <label for="quantity">Anzahl:<input type="number" id="quantityEdit" name="quantity" value="${data.quantity}" required></label>
+                            <label for="quantity">Anzahl:<input type="number" id="quantityEdit" name="quantity" value="${data.quantity}" placeholder="z.B. 5" required></label>
                             <br>
-                            <label for="tags">Tags:<input type="text" id="tagsEdit" name="tags" value="${data.tags}" oninput="suggestTag('tagsEdit')"></label><br>
-                            <label for="ort">Ort:<input type="text" id="ortEdit" name="ort" value="${data.ort}"></label><br>
+                            <label for="tags">Tags:<input type="text" id="tagsEdit" name="tags" value="${data.tags}" oninput="suggestTag('tagsEdit')" placeholder="z.B. Werkzeug, Metall"></label><br>
+                            <label for="ort">Ort:<input type="text" id="ortEdit" name="ort" value="${data.ort}" placeholder="z.B. Werkstatt, Schublade 3"></label><br>
                             <section>
                                 <button type="button" class="normalButton" onclick="edit(${id})">Aktualisieren</button>
                                 <button type="button" class="normalButton red" onclick="closeEdit()">Abbrechen</button>
@@ -408,7 +425,7 @@ function editTag(tagId) {
                             <h3>Tag bearbeiten</h3>
                             <button type="button" onclick="deleteTag(${tagId})"><img class="menu" src="images/recycle-bin-icon.png" alt="Delete"></button>
                         </section>
-                        <label for="tagName">Name:<input type="text" id="tagName" value="${tag.name}" name="tagName" required></label>
+                        <label for="tagName">Name:<input type="text" id="tagName" value="${tag.name}" name="tagName" placeholder="z.B. Wichtig" required></label>
                         <label for="tagColor">Farbe:<input type="color" id="tagColor" name="tagColor" value="${tag.color}" required></label>
                         <label for="tag-icon">Tag Emoji:
                             <select name="tag-icon" id="tag-icon">
@@ -452,7 +469,7 @@ function editTag(tagId) {
                                 <option value="🤣">🤣 Lachanfall</option>
                             </select>
                         </label>
-                        <label for="tagDescription">Beschreibung:<input type="text" id="tagDescription" name="tagDescription" value="${tag.description || ''}"></input></label>
+                        <label for="tagDescription">Beschreibung:<input type="text" id="tagDescription" name="tagDescription" value="${tag.description || ''}" placeholder="Beschreibung des Tags"></input></label>
                         <section>
                             <button type="button" class="normalButton" onclick="editTagFin(${tag.id})">Speichern</button>
                             <button type="button" class="normalButton red" onclick="this.closest('dialog').remove()">Abbrechen</button>
@@ -549,13 +566,13 @@ function showAdd(){
                 </button>
             </section>
             <form id="add-item-form">
-                <label for="name">Name:<input type="text" id="name" name="name" required></label><br>
-                <label for="description">Beschreibung:<input type="text" id="description" name="description" required></label>
+                <label for="name">Name:<input type="text" id="name" name="name" placeholder="z.B. Schraubenzieher" required></label><br>
+                <label for="description">Beschreibung:<input type="text" id="description" name="description" placeholder="z.B. Phillips-Kopf, Größe 2" required></label>
                 <br>
-                <label for="quantity">Anzahl:<input type="number" id="quantity" name="quantity" required></label>
+                <label for="quantity">Anzahl:<input type="number" id="quantity" name="quantity" placeholder="z.B. 5" required></label>
                 <br>
-                <label for="tags">Tags:<input type="text" id="tags" name="tags" oninput="suggestTag('tags')"></label><br>
-                <label for="ort">Ort:<input type="text" id="ort" name="ort"></label><br>
+                <label for="tags">Tags:<input type="text" id="tags" name="tags" oninput="suggestTag('tags')" placeholder="z.B. Werkzeug, Metall"></label><br>
+                <label for="ort">Ort:<input type="text" id="ort" name="ort" placeholder="z.B. Werkstatt, Schublade 3"></label><br>
                 <section>
                     <button type="submit" class="normalButton">Hinzufügen</button>
                     <button type="button" class="normalButton red" onclick="document.querySelector('dialog').close()">Abbrechen</button>
@@ -563,8 +580,8 @@ function showAdd(){
             </form>
 
             <form id="tag-add" style="display: none;">
-                <label for="tag-name">Tag Name:<input type="text" id="tag-name" name="tag-name" required></label>
-                <label for="tag-description">Tag Beschreibung:<input type="text" id="tag-description" name="tag-description" required></label>
+                <label for="tag-name">Tag Name:<input type="text" id="tag-name" name="tag-name" placeholder="z.B. Wichtig" required></label>
+                <label for="tag-description">Tag Beschreibung:<input type="text" id="tag-description" name="tag-description" placeholder="Beschreibung des Tags" required></label>
                 <label for="tag-color">Tag Farbe:<input type="color" id="tag-color" name="tag-color" required></label>
 
                 <label for="tag-icon">Tag Emoji:

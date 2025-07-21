@@ -152,7 +152,6 @@ table{
     width: 100%;
     border-collapse: collapse;
     overflow: scroll;
-    padding: 0 10px;
 }
 
 th, td{
@@ -222,4 +221,14 @@ option{
     color: var(--text-color);
     font-weight: bold;
     font-size: 0.8em;
+}
+
+input[type="text"], input[type="number"], input[type="search"]{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 1em;
 }

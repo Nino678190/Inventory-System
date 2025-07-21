@@ -1,8 +1,8 @@
 # TODO-List
 
 ## Index
-- [ ] Emoji Auswahl
-- [ ] Stylen
+- [X] Emoji Auswahl
+- [X] Stylen
 - [X] Edit Something -> Text to input
 - [X] See and Edit Tags
 - [X] Delete Tags
