@@ -11,4 +11,4 @@
 ## Settings
 - [X] (CSV) Export
 - [X] Light Mode/Dark Mode/Automatik
-- [ ] DB Resetten(Data Deletion) 
+- [X] DB Resetten(Data Deletion) 

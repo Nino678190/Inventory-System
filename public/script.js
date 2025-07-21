@@ -56,8 +56,8 @@ function toggleAutoMode() {
 function getSettings() {
     const viewMode = localStorage.getItem('viewMode') || 'auto';
     document.querySelector(`input[name="viewMode"][value="${viewMode}"]`).checked = true;
-    const language = localStorage.getItem('language') || 'de';
-    document.getElementById('language').value = language;
+    // const language = localStorage.getItem('language') || 'de';
+    // document.getElementById('language').value = language;
     const font = localStorage.getItem('font') || 'noto-sans';
     document.getElementById('font').value = font;
 }
