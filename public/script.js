@@ -147,11 +147,11 @@ function decrypt(tags) {
             const tagData = allTags.find(t => t.name === trimmedTagName);
             if (tagData) {
                 decryptedTags += `
-                    <span class="tag" style="background-color: ${tagData.color}">${tagData.emoji || ''} ${tagData.name}</span>
+                    <span onclick="searchTag('${tagData.name}')" class="tag" style="background-color: ${tagData.color}">${tagData.emoji || ''} ${tagData.name}</span>
                 `;
             } else {
                 // Fallback for a tag that is not found
-                decryptedTags += `<span class="tag">${trimmedTagName}</span>`;
+                decryptedTags += `<span class="tag" onclick="searchTag('${trimmedTagName}')">${trimmedTagName}</span>`;
             }
         }
     }
