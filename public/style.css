@@ -191,3 +191,26 @@ td, th{
 .settings{
     padding: 20px;
 }
+
+.dialogHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+select{
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: none;
+    box-shadow: none;
+    font-weight: bold;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+option{
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 0.8em;
+}

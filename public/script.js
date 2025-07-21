@@ -268,8 +268,8 @@ function searchAnzahl(value) {
         }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
 }
 
-function suggestTag() {
-    let input = document.getElementById('tags').value;
+function suggestTag(origin) {
+    let input = document.getElementById(origin).value;
     input = input.trim().split(',').slice(-1)[0].trim();
     const tags = localStorage.getItem('tags');
     if (!tags) {
@@ -284,14 +284,14 @@ function suggestTag() {
     suggestionContainer.id = 'suggestions';
     suggestionContainer.innerHTML = '';
     suggestions.forEach(tag => {
-        if (document.getElementById('tags').value.split(',').map(t => t.trim()).includes(tag.name)) return; // Skip if tag already exists in input
+        if (document.getElementById(origin).value.split(',').map(t => t.trim()).includes(tag.name)) return; // Skip if tag already exists in input
         const suggestionItem = document.createElement('span');
         suggestionItem.textContent = tag.emoji + ' ' + tag.name;
         suggestionItem.style.cursor = 'pointer';
         suggestionItem.style.backgroundColor = tag.color;
         suggestionItem.className = 'suggestion-item tag';
         suggestionItem.onclick = function () {
-            const tagsInput = document.getElementById('tags');
+            const tagsInput = document.getElementById(origin);
             let current = tagsInput.value;
             let parts = current.split(',');
             parts[parts.length - 1] = ' ' + tag.name;
@@ -308,10 +308,12 @@ function suggestTag() {
     // Remove any existing suggestion container
     const old = document.getElementById('suggestions');
     if (old) old.remove();
-
-    // Find the dialog and the tags input
-    const dialog = document.querySelector('dialog');
-    const tagsInput = document.getElementById('tags');
+    let dialogId = 'add-dialog';
+    if (origin === 'tagsEdit') {
+        dialogId = 'dialog';
+    }
+    const dialog = document.getElementById(dialogId);
+    const tagsInput = document.getElementById(origin);
     // Insert the suggestion container directly after the tags input
     tagsInput.parentNode.insertBefore(suggestionContainer, tagsInput.nextSibling);
 
@@ -325,4 +327,63 @@ function suggestTag() {
     suggestionContainer.style.backgroundColor = 'white';
     suggestionContainer.style.border = '1px solid #ccc';
     suggestionContainer.style.width = tagsInput.offsetWidth + 'px';
+}
+
+function editItem(id) {
+    const item = document.getElementById(id);
+    fetch('/api/get/' + id)
+        .then(response => response.json())
+        .then(data => {
+            const dialog = document.createElement('dialog');
+            document.body.appendChild(dialog);
+            dialog.id = 'dialog';
+            dialog.innerHTML = `
+                        <form id="edit-item-form">
+                            <label for="name">Name:<input type="text" id="nameEdit" name="name" value="${data.name}" required></label><br>
+                            <label for="description">Beschreibung:<input type="text" id="descriptionEdit" name="description" value="${data.description}" required></label>
+                            <br>
+                            <label for="quantity">Anzahl:<input type="number" id="quantityEdit" name="quantity" value="${data.quantity}" required></label>
+                            <br>
+                            <label for="tags">Tags:<input type="text" id="tagsEdit" name="tags" value="${data.tags}" oninput="suggestTag('tagsEdit')"></label><br>
+                            <label for="ort">Ort:<input type="text" id="ortEdit" name="ort" value="${data.ort}"></label><br>
+                            <section>
+                                <button type="button" class="normalButton" onclick="edit(${id})">Aktualisieren</button>
+                                <button type="button" class="normalButton red" onclick="closeEdit()">Abbrechen</button>
+                            </section>
+                        </form>
+                    `;
+            dialog.showModal();
+        })
+        .catch(error => console.error('Fehler beim Abrufen des Items:', error));
+}
+
+function closeEdit() {
+    document.getElementById('dialog').close();
+    document.getElementById('dialog').remove();
+}
+
+function edit(id) {
+    const name = document.getElementById('nameEdit').value;
+    const description = document.getElementById('descriptionEdit').value;
+    const quantity = document.getElementById('quantityEdit').value;
+    let tags = document.getElementById('tagsEdit').value;
+    const ort = document.getElementById('ortEdit').value;
+    if (tags.length > 0 && tags[tags.length - 1] === ',') {
+        tags = tags.slice(0, -1); // Remove trailing comma
+    }
+    fetch('/api/update/' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, description, quantity, tags, ort })
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Netzwerkantwort war nicht ok');
+        }
+        closeEdit();
+        getData(); // Aktualisiere die Tabelle
+    }).catch(error => {
+        console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+    });
 }

@@ -61,19 +61,23 @@
                 </tbody>
             </table>
         </main>
-        <dialog>
-            <h2>Item hinzu</h2>
-            <select name="" id="addType" onchange="toggleForms()">
-                <option value="add-item">Item hinzufügen</option>
-                <option value="add-tag">Tag hinzufügen</option>
-            </select>
+        <dialog id="add-dialog">
+            <section class="dialogHeader">
+                <select name="addType" id="addType" onchange="toggleForms()">
+                    <option value="add-item">Item hinzufügen</option>
+                    <option value="add-tag">Tag hinzufügen</option>
+                </select>
+                <button onclick="document.querySelectorAll('form').forEach(form => {form.reset()})">
+                    <img src="images/undo-arrow-icon.png" alt="Reset" class="formReset menu" title="Formular zurücksetzen">
+                </button>
+            </section>
             <form id="add-item-form">
                 <label for="name">Name:<input type="text" id="name" name="name" required></label><br>
                 <label for="description">Beschreibung:<input type="text" id="description" name="description" required></label>
                 <br>
                 <label for="quantity">Anzahl:<input type="number" id="quantity" name="quantity" required></label>
                 <br>
-                <label for="tags">Tags:<input type="text" id="tags" name="tags" oninput="suggestTag()"></label><br>
+                <label for="tags">Tags:<input type="text" id="tags" name="tags" oninput="suggestTag('tags')"></label><br>
                 <label for="ort">Ort:<input type="text" id="ort" name="ort"></label><br>
                 <section>
                     <button type="submit" class="normalButton">Hinzufügen</button>
