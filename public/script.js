@@ -99,8 +99,8 @@ function displayData(item) {
         <td class="tdTags">${tags}</td>
         <td>${item.ort}</td>
         <td class="none">
-            <button class="edit-button" onclick="editItem(${item.id})"><img src="images/edit-pen-icon.png" class="menu" alt="edit"></button>
-            <button class="delete-button" onclick="deleteItem(${item.id})"><img src="images/recycle-bin-icon.png" class="menu" alt="delete"></button>
+            <button class="edit-button" onclick="editItem(${item.id})"><img src="images/edit-pen-icon.webp" class="menu" alt="edit"></button>
+            <button class="delete-button" onclick="deleteItem(${item.id})"><img src="images/recycle-bin-icon.webp" class="menu" alt="delete"></button>
         </td>
     `;
     document.getElementById('data-table').appendChild(row);
@@ -423,7 +423,7 @@ function editTag(tagId) {
                     <form id="editTagForm">
                         <section class="dialogHeader">
                             <h3>Tag bearbeiten</h3>
-                            <button type="button" onclick="deleteTag(${tagId})"><img class="menu" src="images/recycle-bin-icon.png" alt="Delete"></button>
+                            <button type="button" onclick="deleteTag(${tagId})"><img class="menu" src="images/recycle-bin-icon.webp" alt="Delete"></button>
                         </section>
                         <label for="tagName">Name:<input type="text" id="tagName" value="${tag.name}" name="tagName" placeholder="z.B. Wichtig" required></label>
                         <label for="tagColor">Farbe:<input type="color" id="tagColor" name="tagColor" value="${tag.color}" required></label>
@@ -562,7 +562,7 @@ function showAdd(){
                     <option value="add-tag">Tag hinzufügen</option>
                 </select>
                 <button onclick="document.querySelectorAll('form').forEach(form => {form.reset()})">
-                    <img src="images/undo-arrow-icon.png" alt="Reset" class="formReset menu" title="Formular zurücksetzen">
+                    <img src="images/undo-arrow-icon.webp" alt="Reset" class="formReset menu" title="Formular zurücksetzen">
                 </button>
             </section>
             <form id="add-item-form">
