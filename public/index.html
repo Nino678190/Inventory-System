@@ -73,7 +73,7 @@
                 <br>
                 <label for="quantity">Anzahl:<input type="number" id="quantity" name="quantity" required></label>
                 <br>
-                <label for="tags">Tags:<input type="text" id="tags" name="tags"></label><br>
+                <label for="tags">Tags:<input type="text" id="tags" name="tags" oninput="suggestTag()"></label><br>
                 <label for="ort">Ort:<input type="text" id="ort" name="ort"></label><br>
                 <section>
                     <button type="submit" class="normalButton">Hinzufügen</button>
@@ -143,69 +143,19 @@
             }
         });
 
-        function searchItems(){
-            const searchType = document.getElementById('searchType').value;
-            const value = document.getElementById('search').value.trim();
-            if (value === '') {
-                alert('Bitte gib einen Suchbegriff ein.');
-                return;
-            }
-            if (searchType === 'full'){
-                searchFull(value);
-            } else if (searchType === 'id'){
-                searchId(value);
-            } else if (searchType === 'tag'){
-                searchTag(value);
-            } else if (searchType === 'anzahl'){
-                searchAnzahl(value);
-            } else {
-                alert('Ungültiger Suchtyp.');
-            }
-        }
-
-        function searchFull(value) {
-            fetch(`/api/search/full/${encodeURIComponent(value)}`).then(response => response.json())
-                .then(data => {
-                    document.getElementById('data-table').innerHTML = '';
-                    for (let i = 0; i < data.length; i++) {
-                        const item = data[i];
-                        displayData(item);
-                    }
-                }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
-        }
-
-        function searchId(value) {
-            if (isNaN(value)) {
-                alert('Bitte gib eine gültige ID ein.');
-                return;
-            }
-            fetch(`/api/search/id/${value}`).then(response => response.json())
-                .then(data => {
-                    document.getElementById('data-table').innerHTML = '';
-                    if (data.length > 0) {
-                        displayData(data[0]);
-                    } else {
-                        alert('Kein Eintrag gefunden.');
-                    }
-                })
-                .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
-        }
-
-
-
         document.getElementById('tag-add').addEventListener('submit', function (event) {
             event.preventDefault();
             const tagName = document.getElementById('tag-name').value;
             const tagDescription = document.getElementById('tag-description').value;
             const tagColor = document.getElementById('tag-color').value;
             const tagIcon = document.getElementById('tag-icon').value;
-
+            const emoji = emojiToHtmlUnicode(tagIcon);
             fetch('/api/addTag', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: tagName, description: tagDescription, color: tagColor, icon: tagIcon })
+                body: JSON.stringify({ name: tagName, description: tagDescription, color: tagColor, emoji: tagIcon })
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Netzwerkantwort war nicht ok');
@@ -216,6 +166,7 @@
                 document.getElementById('tag-add').reset();
                 document.querySelector('dialog').close();
                 getData(); // Aktualisiere die Tabelle
+                getTags(); // Aktualisiere die Tags 
             }).catch(error => {
                 console.error('Es gab ein Problem mit der Fetch-Operation:', error);
             });
@@ -228,20 +179,20 @@
             const quantity = document.getElementById('quantity').value;
             const tags = document.getElementById('tags').value;
             const ort = document.getElementById('ort').value;
-
+            const length = tags.length;
+            if (length > 0 && tags[length - 1] === ',') {
+                tags = tags.slice(0, -1); // Remove trailing comma
+            }
             fetch('/api/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name, description, quantity, tags, ort })
+                body: { "name": name, "description": description, "quantity": quantity, "tags":tags, "ort":ort }
             }).then(response => {
                 if (!response.ok) {
                     throw new Error('Netzwerkantwort war nicht ok');
                 }
-                return response.json();
-            }).then(data => {
-                console.log(data);
                 document.getElementById('add-item-form').reset();
                 document.querySelector('dialog').close();
                 getData(); // Aktualisiere die Tabelle

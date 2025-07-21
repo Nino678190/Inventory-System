@@ -158,8 +158,11 @@ function decrypt(tags) {
     return decryptedTags;
 }
 
-// It's better to fetch tags once when the page loads
 document.addEventListener('DOMContentLoaded', () => {
+    getTags();
+});
+
+function getTags(){
     fetch('/api/tags').then(response => {
         if (!response.ok) {
             throw new Error('Netzwerkantwort war nicht ok');
@@ -170,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).catch(error => {
         console.error('Es gab ein Problem beim Laden der Tags:', error);
     });
-});
+}
 
 function exportData() {
     fetch('/api/all').then(response => {
@@ -212,15 +215,14 @@ function searchItems() {
 }
 
 function searchFull(value) {
-    fetch(`/api/search/full/${encodeURIComponent(value)}`)
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('data-table').innerHTML = '';
-        for (let i = 0; i < data.length; i++) {
-            const item = data[i];
-            displayData(item);
-        }
-    }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+    fetch(`/api/search/full/${encodeURIComponent(value)}`).then(response => response.json())
+        .then(data => {
+            document.getElementById('data-table').innerHTML = '';
+            for (let i = 0; i < data.length; i++) {
+                const item = data[i];
+                displayData(item);
+            }
+        }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
 }
 
 function searchId(value) {
@@ -228,15 +230,99 @@ function searchId(value) {
         alert('Bitte gib eine gültige ID ein.');
         return;
     }
-    fetch(`/api/search/id/${value}`)
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('data-table').innerHTML = '';
-        if (data.length > 0) {
-            displayData(data[0]);
-        } else {
-            alert('Kein Eintrag gefunden.');
-        }
-    })
-    .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+    fetch(`/api/search/id/${value}`).then(response => response.json())
+        .then(data => {
+            document.getElementById('data-table').innerHTML = '';
+            if (data.length > 0) {
+                displayData(data[0]);
+            } else {
+                alert('Kein Eintrag gefunden.');
+            }
+        })
+        .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+}
+
+function searchTag(value) {
+    fetch(`/api/search/tags/${encodeURIComponent(value)}`).then(response => response.json())
+        .then(data => {
+            document.getElementById('data-table').innerHTML = '';
+            for (let i = 0; i < data.length; i++) {
+                const item = data[i];
+                displayData(item);
+            }
+        }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+}
+
+function searchAnzahl(value) {
+    if (isNaN(value)) {
+        alert('Bitte gib eine gültige Anzahl ein.');
+        return;
+    }
+    fetch(`/api/search/quantity/${value}`).then(response => response.json())
+        .then(data => {
+            document.getElementById('data-table').innerHTML = '';
+            for (let i = 0; i < data.length; i++) {
+                const item = data[i];
+                displayData(item);
+            }
+        }).catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+}
+
+function suggestTag() {
+    let input = document.getElementById('tags').value;
+    input = input.trim().split(',').slice(-1)[0].trim();
+    const tags = localStorage.getItem('tags');
+    if (!tags) {
+        alert("Keine Tags gefunden, Bitte erst Tags hinzufügen.");
+        return;
+    }
+    const tagList = JSON.parse(tags);
+    console.log(tagList);
+    const suggestions = tagList.filter(tag => tag.name.toLowerCase().includes(input.toLowerCase()));
+
+    const suggestionContainer = document.createElement('section');
+    suggestionContainer.id = 'suggestions';
+    suggestionContainer.innerHTML = '';
+    suggestions.forEach(tag => {
+        if (document.getElementById('tags').value.split(',').map(t => t.trim()).includes(tag.name)) return; // Skip if tag already exists in input
+        const suggestionItem = document.createElement('span');
+        suggestionItem.textContent = tag.emoji + ' ' + tag.name;
+        suggestionItem.style.cursor = 'pointer';
+        suggestionItem.style.backgroundColor = tag.color;
+        suggestionItem.className = 'suggestion-item tag';
+        suggestionItem.onclick = function () {
+            const tagsInput = document.getElementById('tags');
+            let current = tagsInput.value;
+            let parts = current.split(',');
+            parts[parts.length - 1] = ' ' + tag.name;
+            tagsInput.value = parts.join(',').replace(/^,/, '').trim() + ', ';
+            tagsInput.focus();
+            tagsInput.setSelectionRange(tagsInput.value.length, tagsInput.value.length);
+            suggestionContainer.innerHTML = '';
+            if (suggestionContainer.parentNode) suggestionContainer.parentNode.removeChild(suggestionContainer);
+            suggestionContainer.innerHTML = '';
+            document.removeChild(suggestionContainer);
+        };
+        suggestionContainer.appendChild(suggestionItem);
+    });
+    // Remove any existing suggestion container
+    const old = document.getElementById('suggestions');
+    if (old) old.remove();
+
+    // Find the dialog and the tags input
+    const dialog = document.querySelector('dialog');
+    const tagsInput = document.getElementById('tags');
+    // Insert the suggestion container directly after the tags input
+    tagsInput.parentNode.insertBefore(suggestionContainer, tagsInput.nextSibling);
+
+    // Position the suggestion container absolutely relative to the dialog
+    const inputRect = tagsInput.getBoundingClientRect();
+    const dialogRect = dialog.getBoundingClientRect();
+    suggestionContainer.style.position = 'absolute';
+    suggestionContainer.style.zIndex = '10000';
+    suggestionContainer.style.top = (inputRect.bottom - dialogRect.top) + 'px';
+    suggestionContainer.style.left = (inputRect.left - dialogRect.left) + 'px';
+    suggestionContainer.style.backgroundColor = 'white';
+    suggestionContainer.style.border = '1px solid #ccc';
+    suggestionContainer.style.width = tagsInput.offsetWidth + 'px';
 }
