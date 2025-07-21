@@ -187,6 +187,20 @@ app.delete('/api/delete/:id', async (req, res) => {
     }
 });
 
+app.delete('/api/deleteTag/:id', async (req, res) => {
+    let { id } = req.params;
+    try {
+        await pool.query('DELETE FROM tags WHERE id = $1', [id]);
+        // Remove the tag from all items
+        id = id + ', ';
+        await pool.query('UPDATE items SET tags = REPLACE(tags, $1, \'\') WHERE tags LIKE $2', [id, `%${id}%`]);
+        res.status(200).json({ message: 'Tag deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting tag:', error);
+        res.status(500).json({ error: 'Failed to delete tag' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

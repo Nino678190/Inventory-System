@@ -32,7 +32,7 @@
                         <img src="images/search-icon.png" alt="Suche" class="headIcon">
                     </button>
                 </nav>
-                <button onclick="document.querySelector('dialog').showModal()">
+                <button onclick="showAdd()">
                     <img src="images/plus-icon.png" alt="Hinzu" class="headIcon">
                 </button>
                 <button onclick="window.location.href='settings.html'">
@@ -61,84 +61,7 @@
                 </tbody>
             </table>
         </main>
-        <dialog id="add-dialog">
-            <section class="dialogHeader">
-                <select name="addType" id="addType" onchange="toggleForms()">
-                    <option value="add-item">Item hinzufügen</option>
-                    <option value="add-tag">Tag hinzufügen</option>
-                </select>
-                <button onclick="document.querySelectorAll('form').forEach(form => {form.reset()})">
-                    <img src="images/undo-arrow-icon.png" alt="Reset" class="formReset menu" title="Formular zurücksetzen">
-                </button>
-            </section>
-            <form id="add-item-form">
-                <label for="name">Name:<input type="text" id="name" name="name" required></label><br>
-                <label for="description">Beschreibung:<input type="text" id="description" name="description" required></label>
-                <br>
-                <label for="quantity">Anzahl:<input type="number" id="quantity" name="quantity" required></label>
-                <br>
-                <label for="tags">Tags:<input type="text" id="tags" name="tags" oninput="suggestTag('tags')"></label><br>
-                <label for="ort">Ort:<input type="text" id="ort" name="ort"></label><br>
-                <section>
-                    <button type="submit" class="normalButton">Hinzufügen</button>
-                    <button type="button" class="normalButton red" onclick="document.querySelector('dialog').close()">Abbrechen</button>
-                </section>
-            </form>
-
-            <form id="tag-add" style="display: none;">
-                <label for="tag-name">Tag Name:<input type="text" id="tag-name" name="tag-name" required></label>
-                <label for="tag-description">Tag Beschreibung:<input type="text" id="tag-description" name="tag-description" required></label>
-                <label for="tag-color">Tag Farbe:<input type="color" id="tag-color" name="tag-color" required></label>
-                
-                <label for="tag-icon">Tag Emoji:
-                    <select name="tag-icon" id="tag-icon">
-                        <option value="📦">📦 Paket</option>
-                        <option value="📅">📅 Kalender</option>
-                        <option value="📈">📈 Steigendes Diagramm</option>
-                        <option value="📉">📉 Fallendes Diagramm</option>
-                        <option value="📊">📊 Balkendiagramm</option>
-                        <option value="📍">📍 Standort-Pin</option>
-                        <option value="📁">📁 Ordner</option>
-                        <option value="🗂️">🗂️ Ablage</option>
-                        <option value="🏷️">🏷️ Etikett</option>
-                        <option value="💔">💔 Gebrochenes Herz</option>
-                        <option value="💕">💕 Zwei Herzen</option>
-                        <option value="💖">💖 Glitzerndes Herz</option>
-                        <option value="💼">💼 Aktentasche</option>
-                        <option value="😂">😂 Lachtränen</option>
-                        <option value="😅">😅 Erleichtertes Lächeln</option>
-                        <option value="😆">😆 Grinsendes Lachen</option>
-                        <option value="😋">😋 Leckeres Gesicht</option>
-                        <option value="😎">😎 Cooles Gesicht</option>
-                        <option value="😜">😜 Zunge raus</option>
-                        <option value="😡">😡 Wütendes Gesicht</option>
-                        <option value="😢">😢 Trauriges Gesicht</option>
-                        <option value="😁">😁 Zahniges Grinsen</option>
-                        <option value="😍">😍 Verliebtes Gesicht</option>
-                        <option value="🥰">🥰 Lächelnd mit Herzen</option>
-                        <option value="🥺">🥺 Bittendes Gesicht</option>
-                        <option value="😭">😭 Weinendes Gesicht</option>
-                        <option value="🤔">🤔 Nachdenklich</option>
-                        <option value="🤗">🤗 Umarmung</option>
-                        <option value="🤩">🤩 Beeindruckt</option>
-                        <option value="🤫">🤫 Psst!</option>
-                        <option value="🙏">🙏 Betend</option>
-                        <option value="❤️">❤️ Rotes Herz</option>
-                        <option value="🎉">🎉 Party</option>
-                        <option value="🔧">🔧 Schraubenschlüssel</option>
-                        <option value="🛠️">🛠️ Werkzeug</option>
-                        <option value="👍">👍 Daumen hoch</option>
-                        <option value="🙄">🙄 Augenrollen</option>
-                        <option value="🤣">🤣 Lachanfall</option>
-                    </select>
-                </label>
-
-                <section>
-                    <button type="submit" class="normalButton">Tag hinzufügen</button>
-                    <button type="button" class="normalButton red" onclick="document.querySelector('dialog').close()">Abbrechen</button>
-                </section>
-            </form>
-        </dialog>
+        
     </body>
     <script>
         document.getElementById('search').addEventListener('keydown', function (event) {
@@ -153,7 +76,6 @@
             const tagDescription = document.getElementById('tag-description').value;
             const tagColor = document.getElementById('tag-color').value;
             const tagIcon = document.getElementById('tag-icon').value;
-            const emoji = emojiToHtmlUnicode(tagIcon);
             fetch('/api/addTag', {
                 method: 'POST',
                 headers: {

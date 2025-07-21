@@ -140,14 +140,13 @@ function decrypt(tags) {
     const tagNames = tags.split(',');
     const allTags = JSON.parse(localStorage.getItem('tags')) || [];
     let decryptedTags = "";
-
     for (const tagName of tagNames) {
         const trimmedTagName = tagName.trim();
         if (trimmedTagName) {
             const tagData = allTags.find(t => t.name === trimmedTagName);
             if (tagData) {
                 decryptedTags += `
-                    <span onclick="searchTag('${tagData.name}')" class="tag" style="background-color: ${tagData.color}">${tagData.emoji || ''} ${tagData.name}</span>
+                    <span onclick="searchTag('${tagData.name}')" title="${tagData.description}" class="tag" style="background-color: ${tagData.color}">${tagData.emoji || ''} ${tagData.name}</span>
                 `;
             } else {
                 // Fallback for a tag that is not found
@@ -330,7 +329,6 @@ function suggestTag(origin) {
 }
 
 function editItem(id) {
-    const item = document.getElementById(id);
     fetch('/api/get/' + id)
         .then(response => response.json())
         .then(data => {
@@ -386,4 +384,293 @@ function edit(id) {
     }).catch(error => {
         console.error('Es gab ein Problem mit der Fetch-Operation:', error);
     });
+}
+
+function editTag(tagId) {
+    const tagsData = JSON.parse(localStorage.getItem('tags') || '[]');
+    const tag = tagsData.find(t => t.id === tagId);
+    if (!tag) {
+        alert('Tag nicht gefunden.');
+        return;
+    }
+    const dialog = document.createElement('dialog');
+    console.log(tag);
+    dialog.id = 'editTagDialog';
+    dialog.innerHTML = `
+                    <form id="editTagForm">
+                        <section class="dialogHeader">
+                            <h3>Tag bearbeiten</h3>
+                            <button type="button" onclick="deleteTag(${tagId})"><img class="menu" src="images/recycle-bin-icon.png" alt="Delete"></button>
+                        </section>
+                        <label for="tagName">Name:<input type="text" id="tagName" value="${tag.name}" name="tagName" required></label>
+                        <label for="tagColor">Farbe:<input type="color" id="tagColor" name="tagColor" value="${tag.color}" required></label>
+                        <label for="tag-icon">Tag Emoji:
+                            <select name="tag-icon" id="tag-icon">
+                                <option value="📦">📦 Paket</option>
+                                <option value="📅">📅 Kalender</option>
+                                <option value="📈">📈 Steigendes Diagramm</option>
+                                <option value="📉">📉 Fallendes Diagramm</option>
+                                <option value="📊">📊 Balkendiagramm</option>
+                                <option value="📍">📍 Standort-Pin</option>
+                                <option value="📁">📁 Ordner</option>
+                                <option value="🗂️">🗂️ Ablage</option>
+                                <option value="🏷️">🏷️ Etikett</option>
+                                <option value="💔">💔 Gebrochenes Herz</option>
+                                <option value="💕">💕 Zwei Herzen</option>
+                                <option value="💖">💖 Glitzerndes Herz</option>
+                                <option value="💼">💼 Aktentasche</option>
+                                <option value="😂">😂 Lachtränen</option>
+                                <option value="😅">😅 Erleichtertes Lächeln</option>
+                                <option value="😆">😆 Grinsendes Lachen</option>
+                                <option value="😋">😋 Leckeres Gesicht</option>
+                                <option value="😎">😎 Cooles Gesicht</option>
+                                <option value="😜">😜 Zunge raus</option>
+                                <option value="😡">😡 Wütendes Gesicht</option>
+                                <option value="😢">😢 Trauriges Gesicht</option>
+                                <option value="😁">😁 Zahniges Grinsen</option>
+                                <option value="😍">😍 Verliebtes Gesicht</option>
+                                <option value="🥰">🥰 Lächelnd mit Herzen</option>
+                                <option value="🥺">🥺 Bittendes Gesicht</option>
+                                <option value="😭">😭 Weinendes Gesicht</option>
+                                <option value="🤔">🤔 Nachdenklich</option>
+                                <option value="🤗">🤗 Umarmung</option>
+                                <option value="🤩">🤩 Beeindruckt</option>
+                                <option value="🤫">🤫 Psst!</option>
+                                <option value="🙏">🙏 Betend</option>
+                                <option value="❤️">❤️ Rotes Herz</option>
+                                <option value="🎉">🎉 Party</option>
+                                <option value="🔧">🔧 Schraubenschlüssel</option>
+                                <option value="🛠️">🛠️ Werkzeug</option>
+                                <option value="👍">👍 Daumen hoch</option>
+                                <option value="🙄">🙄 Augenrollen</option>
+                                <option value="🤣">🤣 Lachanfall</option>
+                            </select>
+                        </label>
+                        <label for="tagDescription">Beschreibung:<input type="text" id="tagDescription" name="tagDescription" value="${tag.description || ''}"></input></label>
+                        <section>
+                            <button type="button" class="normalButton" onclick="editTagFin(${tag.id})">Speichern</button>
+                            <button type="button" class="normalButton red" onclick="this.closest('dialog').remove()">Abbrechen</button>
+                        </section>
+                    </form>
+                `;
+
+    document.body.appendChild(dialog);
+    getViewMode();
+    dialog.showModal();
+}
+
+function editTagFin(tagId) {
+    const form = document.getElementById('editTagForm');
+    const tagName = form.tagName.value.trim();
+    const tagColor = form.tagColor.value;
+    const tagEmoji = form.tagEmoji.value;
+    const tagDescription = form.tagDescription.value.trim();
+
+    fetch('/api/updateTag/' + tagId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: tagName,
+            color: tagColor,
+            emoji: tagEmoji,
+            description: tagDescription
+        })
+    }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Tag erfolgreich aktualisiert');
+                document.querySelector('dialog').remove();
+                getTags(); // Refresh the tags list
+            } else {
+                alert('Fehler beim Aktualisieren des Tags: ' + data.message);
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Ein Fehler ist aufgetreten. Bitte versuche es später erneut.');
+        });
+}
+
+function deleteTag(tagId) {
+    if (!confirm('Bist du sicher, dass du diesen Tag löschen möchtest?')) {
+        return;
+    }
+    fetch('/api/deleteTag/' + tagId, {
+        method: 'DELETE'
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Netzwerkantwort war nicht ok');
+        }
+        alert('Tag erfolgreich gelöscht');
+        document.getElementById('editTagDialog').remove();
+        getTags(); // Refresh the tags list
+        display()
+        return;
+    }).catch(error => {
+            console.error('Error:', error);
+            alert('Ein Fehler ist aufgetreten. Bitte versuche es später erneut.');
+        });
+}
+
+function display() {
+    const container = document.getElementById('tagList');
+    container.innerHTML = ''; // Clear existing content
+    container.innerHTML = '<h4>Alle Tags:</h4>';
+    const tagsData = JSON.parse(localStorage.getItem('tags') || '[]');
+    tagsData.forEach(tag => {
+        console.log(tag);
+        container.innerHTML += `
+            <span onclick="editTag(${tag.id})" class="tag settingsTag" style="background-color: ${tag.color}" title="${tag.description}" >
+                ${tag.emoji || ''} ${tag.name}
+            </span>
+        `;
+    });
+}
+
+function showAdd(){
+    const dialog = document.createElement('dialog');
+    dialog.id = 'add-dialog';
+    document.body.appendChild(dialog);
+    dialog.innerHTML = `
+            <section class="dialogHeader">
+                <select name="addType" id="addType" onchange="toggleForms()">
+                    <option value="add-item">Item hinzufügen</option>
+                    <option value="add-tag">Tag hinzufügen</option>
+                </select>
+                <button onclick="document.querySelectorAll('form').forEach(form => {form.reset()})">
+                    <img src="images/undo-arrow-icon.png" alt="Reset" class="formReset menu" title="Formular zurücksetzen">
+                </button>
+            </section>
+            <form id="add-item-form">
+                <label for="name">Name:<input type="text" id="name" name="name" required></label><br>
+                <label for="description">Beschreibung:<input type="text" id="description" name="description" required></label>
+                <br>
+                <label for="quantity">Anzahl:<input type="number" id="quantity" name="quantity" required></label>
+                <br>
+                <label for="tags">Tags:<input type="text" id="tags" name="tags" oninput="suggestTag('tags')"></label><br>
+                <label for="ort">Ort:<input type="text" id="ort" name="ort"></label><br>
+                <section>
+                    <button type="submit" class="normalButton">Hinzufügen</button>
+                    <button type="button" class="normalButton red" onclick="document.querySelector('dialog').close()">Abbrechen</button>
+                </section>
+            </form>
+
+            <form id="tag-add" style="display: none;">
+                <label for="tag-name">Tag Name:<input type="text" id="tag-name" name="tag-name" required></label>
+                <label for="tag-description">Tag Beschreibung:<input type="text" id="tag-description" name="tag-description" required></label>
+                <label for="tag-color">Tag Farbe:<input type="color" id="tag-color" name="tag-color" required></label>
+
+                <label for="tag-icon">Tag Emoji:
+                    <select name="tag-icon" id="tag-icon">
+                        <option value="📦">📦 Paket</option>
+                        <option value="📅">📅 Kalender</option>
+                        <option value="📈">📈 Steigendes Diagramm</option>
+                        <option value="📉">📉 Fallendes Diagramm</option>
+                        <option value="📊">📊 Balkendiagramm</option>
+                        <option value="📍">📍 Standort-Pin</option>
+                        <option value="📁">📁 Ordner</option>
+                        <option value="🗂️">🗂️ Ablage</option>
+                        <option value="🏷️">🏷️ Etikett</option>
+                        <option value="💔">💔 Gebrochenes Herz</option>
+                        <option value="💕">💕 Zwei Herzen</option>
+                        <option value="💖">💖 Glitzerndes Herz</option>
+                        <option value="💼">💼 Aktentasche</option>
+                        <option value="😂">😂 Lachtränen</option>
+                        <option value="😅">😅 Erleichtertes Lächeln</option>
+                        <option value="😆">😆 Grinsendes Lachen</option>
+                        <option value="😋">😋 Leckeres Gesicht</option>
+                        <option value="😎">😎 Cooles Gesicht</option>
+                        <option value="😜">😜 Zunge raus</option>
+                        <option value="😡">😡 Wütendes Gesicht</option>
+                        <option value="😢">😢 Trauriges Gesicht</option>
+                        <option value="😁">😁 Zahniges Grinsen</option>
+                        <option value="😍">😍 Verliebtes Gesicht</option>
+                        <option value="🥰">🥰 Lächelnd mit Herzen</option>
+                        <option value="🥺">🥺 Bittendes Gesicht</option>
+                        <option value="😭">😭 Weinendes Gesicht</option>
+                        <option value="🤔">🤔 Nachdenklich</option>
+                        <option value="🤗">🤗 Umarmung</option>
+                        <option value="🤩">🤩 Beeindruckt</option>
+                        <option value="🤫">🤫 Psst!</option>
+                        <option value="🙏">🙏 Betend</option>
+                        <option value="❤️">❤️ Rotes Herz</option>
+                        <option value="🎉">🎉 Party</option>
+                        <option value="🔧">🔧 Schraubenschlüssel</option>
+                        <option value="🛠️">🛠️ Werkzeug</option>
+                        <option value="👍">👍 Daumen hoch</option>
+                        <option value="🙄">🙄 Augenrollen</option>
+                        <option value="🤣">🤣 Lachanfall</option>
+                    </select>
+                </label>
+
+                <section>
+                    <button type="submit" class="normalButton">Tag hinzufügen</button>
+                    <button type="button" class="normalButton red" onclick="document.querySelector('dialog').close()">Abbrechen</button>
+                </section>
+            </form>
+        `
+
+    document.getElementById('tag-add').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const tagName = document.getElementById('tag-name').value;
+        const tagDescription = document.getElementById('tag-description').value;
+        const tagColor = document.getElementById('tag-color').value;
+        const tagIcon = document.getElementById('tag-icon').value;
+        fetch('/api/addTag', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: tagName, description: tagDescription, color: tagColor, emoji: tagIcon })
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Netzwerkantwort war nicht ok');
+            }
+            return response.json();
+        }).then(data => {
+            console.log(data);
+            document.getElementById('tag-add').reset();
+            document.querySelector('dialog').close();
+            if (window.location.pathname !== '/' || window.location.pathname !== '/index.html') {
+                return;
+            }
+            getData(); // Aktualisiere die Tabelle
+            getTags(); // Aktualisiere die Tags 
+        }).catch(error => {
+            console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+        });
+    });
+
+    document.getElementById('add-item-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const description = document.getElementById('description').value;
+        const quantity = document.getElementById('quantity').value;
+        const tags = document.getElementById('tags').value;
+        const ort = document.getElementById('ort').value;
+        const length = tags.length;
+        if (length > 0 && tags[length - 1] === ',') {
+            tags = tags.slice(0, -1); // Remove trailing comma
+        }
+        fetch('/api/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: { "name": name, "description": description, "quantity": quantity, "tags": tags, "ort": ort }
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Netzwerkantwort war nicht ok');
+            }
+            document.getElementById('add-item-form').reset();
+            document.querySelector('dialog').close();
+            getData(); // Aktualisiere die Tabelle
+        }).catch(error => {
+            console.error('Es gab ein Problem mit der Fetch-Operation:', error);
+        });
+    });
+    
+    dialog.showModal();
+    getViewMode();
 }

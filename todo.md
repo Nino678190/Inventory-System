@@ -3,12 +3,12 @@
 ## Index
 - [ ] Emoji Auswahl
 - [ ] Stylen
-- [ ] Edit Something -> Text to input
-- [ ] See and Edit Tags
-- [ ] Delete Tags
+- [X] Edit Something -> Text to input
+- [X] See and Edit Tags
+- [X] Delete Tags
 
 
 ## Settings
-- [ ] (CSV) Export
-- [ ] Light Mode/Dark Mode/Automatik
+- [X] (CSV) Export
+- [X] Light Mode/Dark Mode/Automatik
 - [ ] DB Resetten(Data Deletion) 
